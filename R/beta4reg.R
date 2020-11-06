@@ -44,11 +44,6 @@
   yuorder = order(yu)
   y.min = yu[yuorder[1]]
   y.max = yu[yuorder[length(yu)]]
-  a0 <- y.min-sd(y)/sqrt(n)
-  b0 <- y.max+sd(y)/sqrt(n)
-  link.y = linkf((y-a0)/(b0-a0))
-  fit0 = lm(link.y~X-1)
-  sfit0 = summary(fit0)
   
   #########################################################################################
   # priors
@@ -99,11 +94,11 @@
   theta = start$theta; 
   theta.i = start$theta; 
   if(is.null(theta)){
-    theta=theta = c(ifelse((th1b0-th1a0)>(2*delta.th), 
+    theta = c(ifelse((th1b0-th1a0)>(2*delta.th), 
                            th1b0-delta.th, (th1a0+th1b0)/2), 
                     ifelse((th2b0-th2a0)>(2*delta.th), 
                            th2a0+delta.th, (th2a0+th2b0)/2) )
-    theta.i=theta = c(ifelse((th1b0-th1a0)>(2*delta.th), 
+    theta.i= c(ifelse((th1b0-th1a0)>(2*delta.th), 
                              th1b0-delta.th, (th1a0+th1b0)/2), 
                       ifelse((th2b0-th2a0)>(2*delta.th), 
                              th2a0+delta.th, (th2a0+th2b0)/2) )
@@ -118,13 +113,19 @@
   th.var = var(y)/n/12
   Vhat0 = diag(rep(thvar0, 2))
   # beta
-  beta = start$beta; if(is.null(beta)) beta = fit0$coefficients+0
-  beta.i = start$beta; if(is.null(beta.i)) beta.i = fit0$coefficients+0
-  Shat0 = diag(diag(sfit0$cov.unscaled))
+  ## initial betareg fit
+  a0 <- theta.i[1] + 0
+  b0 <- theta.i[2] + 0
+  fit0 <- betareg::betareg(I((y-a0)/(b0-a0)) ~ X - 1)
+  sfit0 <- summary(fit0)
+  beta = start$beta; if(is.null(beta)) beta = fit0$coefficients$mean+0
+  beta.i = start$beta; if(is.null(beta.i)) beta.i = fit0$coefficients$mean+0
+  Shat0 = sfit0$vcov[1:p, 1:p]
   #Shat0 = diag(rep(1/n, p))
+  
   # variability
-  phi = start$phi; if(is.null(phi)) phi = max(sfit0$r.squared*50, 1)
-  phi.i = start$phi; if(is.null(phi.i)) phi.i = max(sfit0$r.squared*50, 1)
+  phi = start$phi; if(is.null(phi)) phi = fit0$coefficients$precision
+  phi.i = start$phi; if(is.null(phi.i)) phi.i = fit0$coefficients$precision
   start0 <- list(theta = theta.i, beta = beta.i, phi = phi.i)
   
   #########################################################################################
