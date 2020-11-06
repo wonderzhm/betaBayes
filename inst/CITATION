@@ -1,0 +1,13 @@
+citHeader("To cite betaBayes in publications use:")
+
+citEntry(entry = "Article",
+  title        = "Bayesian beta regression for bounded responses with unknown supports",
+  author       = personList(as.person("Haiming Zhou"),
+                   as.person("Xianzheng Huang")),
+  year         = "2020",
+  journal      = "Manuscript",
+  volume       = "submitted",
+  textVersion  =
+  paste("Zhou, H. and Huang, X. (2020).",
+        "Bayesian beta regression for bounded responses with unknown supports.", "submitted.")
+)

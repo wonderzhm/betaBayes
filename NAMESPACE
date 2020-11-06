@@ -1,0 +1,12 @@
+useDynLib(betaBayes, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+importFrom("graphics", "lines", "par", "plot")
+importFrom("methods", "is")
+importFrom("stats", "dbeta", "median", "model.matrix",
+           "model.response", "pnorm", "qnorm",
+           "integrate", "lm", "quantile", "sd", "var")
+
+S3method(print, beta4reg)
+S3method(print, summary.beta4reg)
+S3method(summary, beta4reg)
+exportPattern("^[[:alpha:]]+")
