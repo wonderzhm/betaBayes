@@ -146,6 +146,7 @@ library(coda)
 library(betareg)
 
 ## Data from Ferrari and Cribari-Neto (2004)
+data("GasolineYield", package = "betareg")
 data("FoodExpenditure", package = "betareg")
 
 ## four-parameter beta mean regression
@@ -153,24 +154,40 @@ mcmc=list(nburn=2000, nsave=1000, nskip=4, ndisplay=1000);
 # Note larger nburn, nsave and nskip should be used in practice.
 prior = list(th1a0 = 0, th2b0 = 1) 
 # here the natural bound (0,1) is used to specify the prior
+# GasolineYield
 set.seed(100)
-res1 <- beta4reg(I(food/income) ~ income + persons, data = FoodExpenditure, 
+gy_res1 <- beta4reg(yield ~ batch + temp, data = GasolineYield, 
                 link = "logit", model = "mean",
                 mcmc = mcmc, prior = prior)
-(sfit1 <- summary(res1))
-cox.snell.beta4reg(res1) # Cox-Snell plot
+(gy_sfit1 <- summary(gy_res1))
+cox.snell.beta4reg(gy_res1) # Cox-Snell plot
+# FoodExpenditure
+set.seed(100)
+fe_res1 <- beta4reg(I(food/income) ~ income + persons, data = FoodExpenditure, 
+                link = "logit", model = "mean",
+                mcmc = mcmc, prior = prior)
+(fe_sfit1 <- summary(fe_res1))
+cox.snell.beta4reg(fe_res1) # Cox-Snell plot
 
 ## two-parameter beta mean regression with support (0,1)
 mcmc=list(nburn=2000, nsave=1000, nskip=4, ndisplay=1000);
 # Note larger nburn, nsave and nskip should be used in practice.
 prior = list(th1a0 = 0, th1b0 = 0, th2a0 = 1, th2b0 = 1)
 # this setting forces the support to be (0,1)
+# GasolineYield
 set.seed(100)
-res2 <- beta4reg(I(food/income) ~ income + persons, data = FoodExpenditure, 
+gy_res2 <- beta4reg(yield ~ batch + temp, data = GasolineYield, 
                 link = "logit", model = "mean",
                 mcmc = mcmc, prior = prior)
-(sfit2 <- summary(res2))
-cox.snell.beta4reg(res2) # Cox-Snell plot
+(gy_sfit2 <- summary(gy_res2))
+cox.snell.beta4reg(gy_res2) # Cox-Snell plot
+# FoodExpenditure
+set.seed(100)
+fe_res2 <- beta4reg(I(food/income) ~ income + persons, data = FoodExpenditure, 
+                link = "logit", model = "mean",
+                mcmc = mcmc, prior = prior)
+(fe_sfit2 <- summary(fe_res2))
+cox.snell.beta4reg(fe_res2) # Cox-Snell plot
 
 }
 
