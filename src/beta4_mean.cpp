@@ -463,4 +463,38 @@ RcppExport SEXP
     END_RCPP
   }
 
-
+// Get Cox-Snell residuals
+RcppExport SEXP 
+  beta4_mean_ypred(
+    SEXP X_, SEXP beta_, SEXP phi_, SEXP theta_, 
+    SEXP link_
+  ){
+    BEGIN_RCPP
+    // Transfer R variables into C++;
+    const arma::mat X=as<arma::mat>(X_); // n by p;
+    const int n = X.n_rows;
+    const arma::mat beta=as<arma::mat>(beta_); // p by nsave;
+    const arma::vec phi=as<arma::vec>(phi_); // nsave by 1;
+    const arma::mat theta=as<arma::mat>(theta_); // 2 by nsave;
+    const int link = as<int>(link_);
+    const int nsave = beta.n_cols;
+    
+    // things to save;
+    arma::mat ypred=arma::zeros<arma::mat>(n, nsave);
+    
+    // get residuals
+    for(int isave=0; isave<nsave; ++isave){
+      double th1 = theta(0,isave);
+      double th2 = theta(1,isave);
+      double phi0 = phi[isave];
+      double mi = 0;
+      arma::vec xbeta = X*beta.col(isave);
+      for(int i=0; i<n; ++i){
+        mi = ilinkf(xbeta[i], link);
+        ypred(i, isave) = Rf_rbeta(phi0*mi, phi0*(1-mi))*(th2-th1)+th1; 
+      }
+    }
+    
+    return List::create(Named("ypred")=ypred);
+    END_RCPP
+  }

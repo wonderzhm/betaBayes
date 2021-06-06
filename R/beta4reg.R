@@ -127,27 +127,27 @@
   phi = start$phi; if(is.null(phi)) phi = fit0$coefficients$precision
   phi.i = start$phi; if(is.null(phi.i)) phi.i = fit0$coefficients$precision
   start0 <- list(theta = theta.i, beta = beta.i, phi = phi.i)
-  
+  start.i <- list(theta = theta.i+0, beta = beta.i+0, phi = phi.i+0)
   #########################################################################################
   # calling the c++ code and # output
   #########################################################################################
   if(model == "mode"){
     model.name <- "Beta mode regression with unknown boundaries:";
     foo <- .Call("beta4_mode_reg", nburn_=nburn, nsave_=nsave, nskip_=nskip, 
-                 ndisplay_=ndisplay, y_=y, X_=X, beta_=beta, phi_=phi, 
-                 theta_=theta, phia0_=phia0, phib0_=phib0,
+                 ndisplay_=ndisplay, y_=y, X_=X, beta_=start0$beta, phi_=start0$phi, 
+                 theta_=start0$theta, phia0_=phia0, phib0_=phib0,
                  th1a0_=th1a0, th1b0_=th1b0, th2a0_=th2a0, th2b0_=th2b0,
                  Vhat_=Vhat0, beta0_=beta0, S0inv_=S0inv, Shat_=Shat0, 
-                 l0_=round(min(1000,nburn/2)), adapter_=2.38^2, 
+                 l0_=1000, adapter_=2.38^2, 
                  link_=linkcode, Xpred_=Xpred, PACKAGE = "betaBayes");
   }else if(model == "mean"){
     model.name <- "Beta mean regression with unknown boundaries:";
     foo <- .Call("beta4_mean_reg", nburn_=nburn, nsave_=nsave, nskip_=nskip, 
-                 ndisplay_=ndisplay, y_=y, X_=X, beta_=beta, phi_=phi, 
-                 theta_=theta, phia0_=phia0, phib0_=phib0,
+                 ndisplay_=ndisplay, y_=y, X_=X, beta_=start0$beta, phi_=start0$phi, 
+                 theta_=start0$theta, phia0_=phia0, phib0_=phib0,
                  th1a0_=th1a0, th1b0_=th1b0, th2a0_=th2a0, th2b0_=th2b0,
                  Vhat_=Vhat0, beta0_=beta0, S0inv_=S0inv, Shat_=Shat0, 
-                 l0_=round(min(1000,nburn/2)), adapter_=2.38^2, 
+                 l0_=1000, adapter_=2.38^2, 
                  link_=linkcode, Xpred_=Xpred, PACKAGE = "betaBayes");
   }else{
     stop("it only supports mode or mean regressions")
@@ -178,7 +178,7 @@
                  phi = foo$phi,
                  yhat = foo$fitted,
                  prior = prior,
-                 start = start0,
+                 start = start.i,
                  cpo = foo$cpo_stab,
                  pD = foo$DIC_pD[2], 
                  DIC = foo$DIC_pD[1],
@@ -350,3 +350,38 @@
   invisible(res)
 }
 
+"predict.beta4reg" <- function (object, newx, ...) {
+  res <- NULL
+  if(object$p==1){
+    xpred = cbind(1)
+  }else{
+    if(missing(newx)){
+      xpred <- object$X
+    }else{
+      if(is.vector(newx)){
+        xpred <- matrix(newx, nrow = 1);
+      }else{
+        xpred <- as.matrix(newx)
+      }
+    }
+  }
+  if(ncol(xpred)!=object$p) stop("number of columns need to be equal to the number of coefficients, p.")
+  if(is(object,"beta4reg")){
+    linkcode = switch(object$link, logit=1, probit=2, 
+                      cloglog=3, loglog=4);
+    if(object$model=="mode"){
+      foo <- .Call("beta4_mode_ypred", X_=object$X,
+                   beta_=object$beta, phi_=object$phi, theta_=object$theta,
+                   link_=linkcode, PACKAGE = "betaBayes");
+    }else if(object$model=="mean"){
+      foo <- .Call("beta4_mean_ypred", X_=object$X,
+                   beta_=object$beta, phi_=object$phi, theta_=object$theta,
+                   link_=linkcode, PACKAGE = "betaBayes");
+    }else{
+      stop("This function only supports beta mean and mode models");
+    }
+    res <- foo$ypred
+  }
+  res
+  invisible(res)
+}
