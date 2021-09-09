@@ -3,9 +3,10 @@ Type: Package
 Title: Bayesian Beta Regression 
 Version: 1.0
 Date: 2021-06-07
-Author: Haiming Zhou <zhouh@niu.edu> and Xianzheng Huang <huang@stat.sc.edu>
-Maintainer: Haiming Zhou <zhouh@niu.edu>
-Description: Provides a class of Bayesian beta regression modes for the analysis of continuous data with support restricted to an unknown finite support. The response variable is modeled using a four-parameter beta distribution with the mean or mode parameter depending linearly on covariates through a link function. When the response support is known to be (0,1), the above class of models reduce to traditional (0,1) supported beta regression models. Model choice is carried out via the logarithm of the pseudo marginal likelihood (LPML), the deviance information criterion (DIC), and the Watanabe-Akaike information criterion (WAIC).
+Authors@R: c(person("Haiming", "Zhou", role = c("aut", "cre","cph"),
+                    email = "zhouh@niu.edu"),
+             person("Xianzheng", "Huang", role = "aut") )
+Description: Provides a class of Bayesian beta regression models for the analysis of continuous data with support restricted to an unknown finite support. The response variable is modeled using a four-parameter beta distribution with the mean or mode parameter depending linearly on covariates through a link function. When the response support is known to be (0,1), the above class of models reduce to traditional (0,1) supported beta regression models. Model choice is carried out via the logarithm of the pseudo marginal likelihood (LPML), the deviance information criterion (DIC), and the Watanabe-Akaike information criterion (WAIC). See Zhou and Huang (2021, "Bayesian beta regression for bounded responses with unknown supports") <https://sites.google.com/view/haimingzhou/research>.
 License: GPL (>= 2)
 Depends: R (>= 3.5.0)
 Imports: Rcpp (>= 0.11.1), splines, methods, coda, betareg

@@ -139,7 +139,6 @@ Haiming Zhou \email{<zhouh@niu.edu>} and Xianzheng Huang \email{<huang@stat.sc.e
 }
 
 \examples{
-rm(list=ls())
 library(betaBayes)
 library(coda)
 library(betareg)

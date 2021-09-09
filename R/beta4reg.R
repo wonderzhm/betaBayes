@@ -333,7 +333,7 @@
       r.max <- max(tgrid)
       xlim <- c(0, r.max); ylim <- c(0, r.max)
       xx <- seq(0, r.max, 0.01)
-      par(cex = 1.5, mar = c(2.1,2.1,1,1), cex.lab = 1.4, cex.axis = 1.1)
+      #par(cex = 1.5, mar = c(2.1,2.1,1,1), cex.lab = 1.4, cex.axis = 1.1)
       plot(tgrid, foo$hhat, xlim = xlim,
            ylim = ylim, lwd = 3, "l", col="white")
       lines(xx, xx, lty = 1, lwd = 2, col = "darkgrey")
